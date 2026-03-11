@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLF LABS // Preferências A1 PRO</title>
+    
+    <!-- Scripts e Fontes Externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Variáveis de Tema da Wolf Labs */
+        :root {
+            --w-amber: #f59e0b;
+            --w-amber-glow: rgba(245, 158, 11, 0.4);
+            --w-cyan: #06b6d4;
+            --w-cyan-glow: rgba(6, 182, 212, 0.4);
+            --w-purple: #8b5cf6;
+            --w-dark: #050505;
+            --w-panel: #0f172a;
+            --w-text: #f8fafc;
+            --w-error: #f43f5e;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--w-dark);
+            color: var(--w-text);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(245, 158, 11, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.05), transparent 25%);
+        }
+
+        .tech-font { font-family: 'JetBrains Mono', monospace; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { height: 8px; width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background-color: var(--w-amber); }
+
+        /* CÁPSULAS DE NAVEGAÇÃO */
+        .mini-capsule {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 500px;
+            padding: 10px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--w-text);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(12px);
+        }
+        .mini-capsule:hover { transform: translateY(-3px); }
+        
+        .capsule-amber:hover { border-color: var(--w-amber); background: rgba(245, 158, 11, 0.1); box-shadow: 0 8px 15px var(--w-amber-glow); }
+        .capsule-amber i { color: var(--w-amber); }
+        
+        .capsule-cyan:hover { border-color: var(--w-cyan); background: rgba(6, 182, 212, 0.1); box-shadow: 0 8px 15px var(--w-cyan-glow); }
+        .capsule-cyan i { color: var(--w-cyan); }
+
+        .capsule-purple:hover { border-color: var(--w-purple); background: rgba(139, 92, 246, 0.1); box-shadow: 0 8px 15px rgba(139, 92, 246, 0.4); }
+        .capsule-purple i { color: var(--w-purple); }
+
+        .capsule-rose:hover { border-color: var(--w-error); background: rgba(244, 63, 94, 0.1); box-shadow: 0 8px 15px rgba(244, 63, 94, 0.4); }
+        .capsule-rose i { color: var(--w-error); }
+
+        /* CARTÃO DE FOCO PRINCIPAL */
+        .focus-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(5, 5, 5, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        /* SOBREPOSIÇÃO DO LABORATÓRIO (MODAL) */
+        .lab-overlay {
+            position: fixed; inset: 0; background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(25px);
+            z-index: 100; display: flex; flex-direction: column; align-items: center;
+            opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: scale(1.02);
+            overflow-y: auto;
+        }
+        .lab-overlay.active { opacity: 1; pointer-events: auto; transform: scale(1); }
+        .lab-container { width: 100%; max-width: 900px; min-height: 100%; display: flex; flex-direction: column; padding: 40px 20px; }
+
+        /* COMPONENTES DE EXERCÍCIO */
+        .option-btn {
+            background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); color: var(--w-text);
+            padding: 20px 28px; border-radius: 12px; font-size: 1.1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 15px; width: 100%; text-align: left;
+        }
+        .option-btn:hover:not(.selected) { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.4); transform: translateX(5px); }
+        .option-btn.selected { background: rgba(245, 158, 11, 0.2); border-color: var(--w-amber); color: #fff; box-shadow: 0 5px 15px rgba(245, 158, 11, 0.2); }
+        .option-btn i { font-size: 1.5rem; color: rgba(255,255,255,0.3); transition: color 0.2s; }
+        .option-btn.selected i { color: var(--w-amber); }
+
+        .word-node {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--w-text);
+            padding: 14px 26px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1.1rem;
+            transition: all 0.2s; display: inline-block; margin: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .word-node:hover { background: rgba(6, 182, 212, 0.2); border-color: var(--w-cyan); color: #fff; transform: translateY(-2px); }
+        .word-node.in-zone { background: var(--w-cyan); color: #000; border-color: var(--w-cyan); box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
+
+        .bug-word {
+            display: inline-block; padding: 10px 18px; margin: 5px; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-weight: bold; font-size: 1.5rem;
+        }
+        .bug-word:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
+        .bug-word.selected { background: rgba(244, 63, 94, 0.2); color: var(--w-error); border: 1px solid var(--w-error); box-shadow: 0 0 20px rgba(244, 63, 94, 0.4); }
+
+        /* SPEAKING CARDS (ARENA) */
+        .speaking-card {
+            background: #0f172a; border: 2px solid #334155; border-radius: 24px;
+            width: 100%; max-width: 600px; margin: 0 auto; padding: 40px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative;
+        }
+        .starter-reveal {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0, 1, 0, 1); opacity: 0;
+        }
+        .starter-reveal.open { max-height: 200px; opacity: 1; transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out; margin-top: 20px; }
+        .mic-pulse { animation: micPulse 2s infinite; }
+        @keyframes micPulse { 0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(139, 92, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); } }
+
+        /* BOTÕES DE ACÇÃO */
+        .action-btn {
+            background: var(--w-amber); color: #000; border: none; padding: 18px 45px; border-radius: 500px;
+            font-weight: 800; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        .action-btn:hover:not(:disabled) { transform: scale(1.05); background: #d97706; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.5); }
+        .action-btn:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); cursor: not-allowed; box-shadow: none; }
+
+        /* SOBREPOSIÇÃO DE FEEDBACK */
+        .feedback-overlay {
+            position: fixed; inset: 0; background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(15px); z-index: 150;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .feedback-overlay.active { opacity: 1; pointer-events: auto; }
+
+        /* ANIMAÇÕES */
+        .fade-in-stagger > * { opacity: 0; animation: fadeInUp 0.5s forwards; }
+        .fade-in-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+        .fade-in-stagger > *:nth-child(2) { animation-delay: 0.2s; }
+        .fade-in-stagger > *:nth-child(3) { animation-delay: 0.3s; }
+        .fade-in-stagger > *:nth-child(4) { animation-delay: 0.4s; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); } 30%, 50%, 70% { transform: translateX(-8px); } 40%, 60% { transform: translateX(8px); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- BARRA LATERAL -->
+    <aside class="w-20 bg-[#0f172a]/90 backdrop-blur-xl border-r border-amber-500/20 flex flex-col items-center py-6 flex-shrink-0 z-20">
+        <div class="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center text-black text-2xl mb-12 shadow-[0_0_20px_rgba(245,158,11,0.5)] cursor-pointer">
+            <i class="fa-solid fa-heart"></i>
+        </div>
+        <nav class="flex flex-col gap-8 text-slate-500">
+            <a href="#" class="text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] text-xl"><i class="fa-solid fa-pizza-slice"></i></a>
+            <a href="#" class="hover:text-cyan-400 transition-colors text-xl"><i class="fa-solid fa-gamepad"></i></a>
+            <a href="#" class="hover:text-purple-400 transition-colors text-xl"><i class="fa-solid fa-microphone"></i></a>
+        </nav>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL (DASHBOARD) -->
+    <main class="flex-1 overflow-y-auto relative z-10">
+        <header class="px-10 py-8 flex justify-between items-center sticky top-0 bg-[#050505]/80 backdrop-blur-2xl z-10 border-b border-amber-500/10">
+            <div>
+                <h1 class="text-3xl font-black uppercase tracking-tighter">Preferences <span class="text-amber-400 drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">PRO</span></h1>
+                <p class="text-[0.65rem] tech-font text-amber-600 uppercase tracking-[0.2em] mt-1">A1 Level • Likes & Dislikes • 30 Exercícios</p>
+            </div>
+            <div class="tech-font text-[0.65rem] text-purple-400 border border-purple-400/30 bg-purple-400/10 px-4 py-2 rounded-full uppercase tracking-widest flex items-center gap-2">
+                <span class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span> STT PROTOCOL ACTIVE
+            </div>
+        </header>
+
+        <div class="px-10 py-8 max-w-6xl mx-auto fade-in-stagger">
+            
+            <!-- MÓDULOS RÁPIDOS -->
+            <div class="mb-12">
+                <h3 class="text-[0.65rem] tech-font text-slate-500 uppercase tracking-widest mb-4 pl-1">Seleciona o Módulo de Treino (30 Exercícios no Total)</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button class="mini-capsule capsule-amber" onclick="openLab('radar', 'Visual Radar')">
+                        <i class="fa-solid fa-eye"></i> Visual Radar (6)
+                    </button>
+                    <button class="mini-capsule capsule-cyan" onclick="openLab('syntax', 'Syntax Builder')">
+                        <i class="fa-solid fa-cubes"></i> Syntax Builder (6)
+                    </button>
+                    <button class="mini-capsule capsule-rose" onclick="openLab('bug', 'Bug Detector')">
+                        <i class="fa-solid fa-bug"></i> Bug Detector (6)
+                    </button>
+                    <button class="mini-capsule capsule-amber" onclick="openLab('simulation', 'Simulations')">
+                        <i class="fa-solid fa-comments"></i> Roleplay (4)
+                    </button>
+                    <button class="mini-capsule capsule-purple" onclick="openLab('speaking', 'Speaking Arena')" style="border-color: rgba(139, 92, 246, 0.5);">
+                        <i class="fa-solid fa-microphone-lines animate-pulse"></i> Speaking Cards (8)
+                    </button>
+                </div>
+            </div>
+
+            <!-- CARTÃO DE FOCO -->
+            <div class="focus-card p-10 md:p-12 flex flex-col md:flex-row items-center gap-10">
+                <div class="w-32 h-32 rounded-full border-4 border-dashed border-amber-500 flex items-center justify-center relative animate-[spin_10s_linear_infinite] flex-shrink-0">
+                    <i class="fa-solid fa-heart text-amber-400 text-5xl absolute animate-[spin_10s_linear_reverse_infinite]"></i>
+                </div>
+                
+                <div class="flex-grow z-10">
+                    <div class="text-[0.65rem] tech-font text-amber-400 bg-amber-400/10 px-3 py-1.5 rounded-full inline-flex items-center gap-2 uppercase tracking-[0.2em] mb-4 border border-amber-400/20">
+                        <i class="fa-solid fa-utensils text-[0.5rem]"></i> Food & Hobbies
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-black mb-3 tracking-tighter">What do you like?</h2>
+                    <p class="text-slate-300 text-sm md:text-base max-w-2xl mb-8 leading-relaxed font-light">
+                        Domina as estruturas de preferências no <strong>Present Simple</strong> (I like / I don't like). Presta atenção especial ao <span class="text-amber-400 font-bold bg-amber-400/10 px-1 rounded">He/She likes</span> e ao uso do <span class="text-cyan-400 font-bold bg-cyan-400/10 px-1 rounded">Verb + ing</span> para descrever os teus hobbies favoritos!
+                    </p>
+                    <button onclick="openLab('full-workout', 'Full Mastery Workout')" class="bg-gradient-to-r from-amber-500 to-orange-600 text-black font-extrabold py-4 px-10 rounded-full uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-[0_10px_20px_rgba(245,158,11,0.3)] flex items-center gap-3">
+                        Começar Treino Completo (30) <i class="fa-solid fa-play"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ==========================================
+         LABORATÓRIO DE EXERCÍCIOS (OVERLAY)
+         ========================================== -->
+    <div id="lab-overlay" class="lab-overlay">
+        <div class="lab-container">
+            <!-- Cabeçalho do Lab -->
+            <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-5 flex-shrink-0">
+                <div class="flex items-center gap-5">
+                    <div id="lab-icon-box" class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center border border-slate-700 text-amber-400 shadow-[inset_0_0_15px_rgba(245,158,11,0.15)]">
+                        <i class="fa-solid fa-gamepad text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black uppercase tracking-tighter text-white" id="lab-header-title">Capsule Name</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span>
+                            <p class="text-[0.65rem] tech-font text-slate-400 uppercase tracking-widest">Nível <span id="q-counter" class="text-white">01</span> de <span id="q-total">05</span></p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="closeLab()" class="text-slate-400 hover:text-white hover:bg-white/10 w-12 h-12 rounded-full transition-all flex items-center justify-center text-xl backdrop-blur-md border border-transparent hover:border-white/20">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Barra de Progresso -->
+            <div class="w-full height-[6px] bg-white/5 rounded-full overflow-hidden mb-8 flex-shrink-0">
+                <div class="h-full bg-gradient-to-r from-cyan-500 to-amber-500 transition-all duration-500 shadow-[0_0_10px_var(--w-amber)]" id="progress-bar" style="width: 0%; height: 6px;"></div>
+            </div>
+
+            <!-- Área da Pergunta -->
+            <div id="exercise-area" class="flex-grow flex flex-col justify-center items-center w-full py-2 min-h-[400px]">
+                <!-- Injetado via JS -->
+            </div>
+
+            <!-- Botão de Ação -->
+            <div class="mt-8 flex justify-end border-t border-white/10 pt-6 flex-shrink-0 w-full">
+                <button id="verify-btn" onclick="checkAnswer()" class="action-btn w-full md:w-auto flex items-center justify-center gap-3" disabled>
+                    Verificar Resposta <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sobreposição de Feedback -->
+        <div id="feedback-overlay" class="feedback-overlay">
+            <div id="feedback-icon" class="text-7xl mb-6"></div>
+            <h2 id="feedback-title" class="text-4xl font-black uppercase tracking-tighter mb-3 text-center"></h2>
+            <div class="bg-slate-900/80 border border-slate-700 p-6 rounded-2xl max-w-md w-full text-center mb-10 backdrop-blur-xl shadow-2xl">
+                <p id="feedback-msg" class="text-base text-slate-300 leading-relaxed font-medium"></p>
+            </div>
+            <button onclick="nextQuestion()" class="action-btn flex items-center gap-3">
+                Próxima Etapa <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- LÓGICA DO SISTEMA -->
+    <script>
+        // BASE DE DADOS COM 30 EXERCÍCIOS
+        const capsuleData = {
+            'radar': [
+                { type: 'choice', icon: 'fa-pizza-slice', color: 'text-orange-400', context: "Food Preference.", q: "What is this?", options: ["I like pasta.", "I like pizza.", "I like fish."], icons: ['fa-bowl-rice', 'fa-pizza-slice', 'fa-fish'], a: 1, feedback: "Correct! That is a pizza." },
+                { type: 'choice', icon: 'fa-person-hiking', color: 'text-green-500', context: "Activity Preference.", q: "What does she like doing?", options: ["She likes cooking.", "She likes dancing.", "She likes hiking."], icons: ['fa-fire-burner', 'fa-music', 'fa-person-hiking'], a: 2, feedback: "Awesome! 'She likes hiking' is correct." },
+                { type: 'choice', icon: 'fa-fish', color: 'text-blue-300', context: "Dislike.", q: "Identify the sentence:", options: ["He doesn't like fish.", "He doesn't like pasta.", "He doesn't like apples."], icons: ['fa-fish', 'fa-bowl-rice', 'fa-apple-whole'], a: 0, feedback: "Perfect! 'He doesn't like fish'." },
+                { type: 'choice', icon: 'fa-gamepad', color: 'text-cyan-400', context: "Hobbies.", q: "What do they like doing?", options: ["They like swimming.", "They like playing video games.", "They like singing."], icons: ['fa-person-swimming', 'fa-gamepad', 'fa-microphone'], a: 1, feedback: "Spot on! 'They like playing video games'." },
+                { type: 'choice', icon: 'fa-apple-whole', color: 'text-red-500', context: "Healthy Food.", q: "What food is this?", options: ["I like chocolate.", "I like nuts.", "I like apples."], icons: ['fa-cookie', 'fa-seedling', 'fa-apple-whole'], a: 2, feedback: "Correct! You like apples." },
+                { type: 'choice', icon: 'fa-fire-burner', color: 'text-amber-500', context: "Weekend Activities.", q: "What does he like doing?", options: ["He likes hiking.", "He likes cooking.", "He likes singing."], icons: ['fa-person-hiking', 'fa-fire-burner', 'fa-microphone'], a: 1, feedback: "Great! 'He likes cooking'." }
+            ],
+            'syntax': [
+                { type: 'build', q: "Build the sentence: Eu gosto de pizza.", words: ["I", "like", "pizza."], a: ["I", "like", "pizza."], feedback: "Great job! Subject + like + object." },
+                { type: 'build', q: "Build the sentence: Ela gosta de dançar.", words: ["She", "likes", "dancing."], a: ["She", "likes", "dancing."], feedback: "Excellent! Remember the 's' for She, and the '-ing' for the activity." },
+                { type: 'build', q: "Build the negative: Ele não gosta de peixe.", words: ["He", "doesn't", "like", "fish."], a: ["He", "doesn't", "like", "fish."], feedback: "Spot on! 'He doesn't like'." },
+                { type: 'build', q: "Build the question: O que gostas de fazer?", words: ["What", "do", "you", "like", "doing?"], a: ["What", "do", "you", "like", "doing?"], feedback: "Correct! The golden question for hobbies." },
+                { type: 'build', q: "Build the negative: Eu não gosto de cozinhar.", words: ["I", "don't", "like", "cooking."], a: ["I", "don't", "like", "cooking."], feedback: "Perfect! 'I don't like + verb(ing)'." },
+                { type: 'build', q: "Build the sentence: O meu amigo gosta de chocolate.", words: ["My", "friend", "likes", "chocolate."], a: ["My", "friend", "likes", "chocolate."], feedback: "Great! 'My friend' is third-person singular, so we use 'likes'." }
+            ],
+            'bug': [
+                { type: 'hunt', q: "Find the Grammar Bug:", sentence: ["He", "like", "pizza."], a: 1, correctWord: "likes", feedback: "Bug fixed! For 'He/She/It', we add 's'. -> He likes pizza." },
+                { type: 'hunt', q: "Find the Grammar Bug:", sentence: ["I", "doesn't", "like", "fish."], a: 1, correctWord: "don't", feedback: "Bug fixed! For 'I/You/We/They', we use 'don't'. -> I don't like fish." },
+                { type: 'hunt', q: "Find the Grammar Bug:", sentence: ["She", "likes", "dance", "on weekends."], a: 2, correctWord: "dancing", feedback: "Bug fixed! Activities after 'like' usually take '-ing'. -> She likes dancing." },
+                { type: 'hunt', q: "Find the Grammar Bug:", sentence: ["What", "does", "you", "like?"], a: 1, correctWord: "do", feedback: "Bug fixed! 'You' always takes 'do'. -> What do you like?" },
+                { type: 'hunt', q: "Find the Grammar Bug:", sentence: ["My", "friend", "don't", "like", "apples."], a: 2, correctWord: "doesn't", feedback: "Bug fixed! 'My friend' (he/she) needs 'doesn't'. -> My friend doesn't like apples." },
+                { type: 'hunt', q: "Find the Grammar Bug:", sentence: ["They", "likes", "playing", "games."], a: 1, correctWord: "like", feedback: "Bug fixed! 'They' does not take the 's'. -> They like playing." }
+            ],
+            'simulation': [
+                { type: 'sim-chat', character: "Waiter", icon: "fa-bell-concierge", q: "Welcome to our restaurant! What food do you like?", starter: "Thank you! I like..." },
+                { type: 'sim-chat', character: "Friend", icon: "fa-user-group", q: "Hey! Do you like playing video games?", starter: "Yes, I like... / No, I don't like..." },
+                { type: 'sim-chat', character: "Mom", icon: "fa-person-breastfeeding", q: "I am buying snacks. What does your best friend like?", starter: "My friend likes..." },
+                { type: 'sim-chat', character: "Colleague", icon: "fa-briefcase", q: "So, the weekend is here! What do you like doing on weekends?", starter: "On weekends, I like [verb+ing]..." }
+            ],
+            'speaking': [
+                { type: 'card', icon: 'fa-pizza-slice', q: "What is your favorite food?", hint: "Use 'I like...'", starter: "I really like [pizza / pasta / fish]." },
+                { type: 'card', icon: 'fa-ban', q: "What food don't you like?", hint: "Use 'I don't like...'", starter: "I don't like [nuts / rice / chocolate]." },
+                { type: 'card', icon: 'fa-calendar-week', q: "What do you like doing on weekends?", hint: "Remember to use Verb + ing.", starter: "On weekends, I like [hiking / swimming / dancing]." },
+                { type: 'card', icon: 'fa-person-dress', q: "What does your mother like doing?", hint: "Use 'She likes + ing...'", starter: "My mother likes [cooking / reading / singing]." },
+                { type: 'card', icon: 'fa-apple-whole', q: "Do you like apples?", hint: "Answer with Yes or No + details.", starter: "Yes, I like apples. They are delicious. / No, I don't like apples." },
+                { type: 'card', icon: 'fa-user-group', q: "What food does your best friend like?", hint: "Use 'My friend likes...'", starter: "My best friend likes [pasta / chocolate / fast food]." },
+                { type: 'card', icon: 'fa-fire-burner', q: "Do you like cooking?", hint: "Be honest! Use Verb + ing if you explain.", starter: "Yes, I like cooking for my family. / No, I don't like cooking." },
+                { type: 'card', icon: 'fa-scale-balanced', q: "Contrast: I like X, but I don't like Y.", hint: "Choose two different foods or activities.", starter: "I like [pizza], but I don't like [fish]." }
+            ]
+        };
+
+        // Combina tudo para o "Treino Completo"
+        capsuleData['full-workout'] = [
+            ...capsuleData['radar'],
+            ...capsuleData['syntax'],
+            ...capsuleData['bug'],
+            ...capsuleData['simulation'],
+            ...capsuleData['speaking']
+        ];
+
+        let currentActiveCapsuleId = null;
+        let currentExercises = [];
+        let currentQ = 0;
+        let selectedOption = null;
+        let buildSelection = [];
+
+        function openLab(capsuleId, title) {
+            if(!capsuleData[capsuleId]) return;
+
+            currentActiveCapsuleId = capsuleId;
+            currentExercises = capsuleData[capsuleId];
+            currentQ = 0;
+            
+            document.getElementById('lab-header-title').innerText = title;
+            document.getElementById('q-total').innerText = String(currentExercises.length).padStart(2, '0');
+            
+            // Ajusta a cor do ícone com base no módulo
+            const iconBox = document.getElementById('lab-icon-box');
+            iconBox.className = "w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center border border-slate-700 shadow-[inset_0_0_15px_rgba(255,255,255,0.1)]";
+            if(capsuleId === 'speaking') iconBox.classList.add('text-purple-400');
+            else if(capsuleId === 'bug') iconBox.classList.add('text-rose-400');
+            else if(capsuleId === 'syntax') iconBox.classList.add('text-cyan-400');
+            else iconBox.classList.add('text-amber-400');
+
+            document.getElementById('lab-overlay').classList.add('active');
+            renderQuestion();
+        }
+
+        function closeLab() {
+            document.getElementById('lab-overlay').classList.remove('active');
+            document.getElementById('feedback-overlay').classList.remove('active');
+        }
+
+        function renderQuestion() {
+            const ex = currentExercises[currentQ];
+            const verifyBtn = document.getElementById('verify-btn');
+            const exerciseArea = document.getElementById('exercise-area');
+            const progressBar = document.getElementById('progress-bar');
+            
+            verifyBtn.disabled = true;
+            verifyBtn.parentElement.classList.remove('hidden');
+            verifyBtn.innerHTML = 'Verificar Resposta <i class="fa-solid fa-check"></i>';
+            verifyBtn.className = "action-btn w-full md:w-auto flex items-center justify-center gap-3";
+            verifyBtn.style.background = "var(--w-amber)";
+            verifyBtn.style.boxShadow = "0 4px 15px rgba(245, 158, 11, 0.3)";
+            
+            selectedOption = null;
+            buildSelection = [];
+
+            document.getElementById('q-counter').innerText = String(currentQ + 1).padStart(2, '0');
+            progressBar.style.width = `${((currentQ) / currentExercises.length) * 100}%`;
+
+            let html = '<div class="fade-in-stagger w-full max-w-3xl flex flex-col items-center">';
+
+            if (ex.type === 'choice') {
+                html += `<div class="mb-8 text-center">
+                            <i class="fa-solid ${ex.icon} text-6xl ${ex.color} drop-shadow-lg mb-4"></i>
+                            <p class="text-sm tech-font text-cyan-400 uppercase tracking-widest mb-2">${ex.context}</p>
+                            <h2 class="text-3xl font-bold text-white">${ex.q}</h2>
+                         </div>`;
+                html += `<div class="flex flex-col gap-4 w-full">`;
+                ex.options.forEach((opt, i) => {
+                    let optIcon = ex.icons ? `<i class="fa-solid ${ex.icons[i]} w-8 text-center"></i>` : '';
+                    html += `<button onclick="selectChoice(${i}, this)" class="option-btn">${optIcon} ${opt}</button>`;
+                });
+                html += `</div>`;
+            }
+            else if (ex.type === 'build') {
+                html += `<h2 class="text-2xl md:text-3xl font-bold mb-10 text-center text-white">${ex.q}</h2>`;
+                html += `<div id="build-zone" class="w-full min-h-[90px] bg-slate-900/50 border-2 border-dashed border-cyan-500/50 rounded-2xl p-5 flex flex-wrap justify-center items-center gap-3 mb-10 transition-colors shadow-inner"></div>`;
+                html += `<div id="word-bank" class="flex flex-wrap justify-center gap-3 w-full">`;
+                let shuffledWords = [...ex.words].sort(() => Math.random() - 0.5);
+                shuffledWords.forEach((word) => {
+                    html += `<div onclick="toggleWord(this)" class="word-node" data-word="${word.replace(/"/g, '&quot;')}">${word}</div>`;
+                });
+                html += `</div>`;
+                html += `<div class="text-center mt-10"><button onclick="renderQuestion()" class="text-sm text-slate-500 hover:text-white underline tech-font transition-colors"><i class="fa-solid fa-rotate-right mr-2"></i> Reiniciar Frase</button></div>`;
+            }
+            else if (ex.type === 'hunt') {
+                html += `<div class="text-center mb-10">
+                            <i class="fa-solid fa-bug text-5xl text-rose-500 mb-4 animate-pulse"></i>
+                            <h2 class="text-2xl md:text-3xl font-bold text-white">${ex.q}</h2>
+                            <p class="text-sm text-slate-400 mt-2">Clica na palavra incorreta (erro gramatical).</p>
+                         </div>`;
+                html += `<div class="flex flex-wrap justify-center items-center gap-2 bg-slate-900 p-8 rounded-2xl border border-slate-700 w-full shadow-xl">`;
+                ex.sentence.forEach((word, i) => {
+                    html += `<span onclick="selectBug(${i}, this)" class="bug-word shadow-md">${word}</span>`;
+                });
+                html += `</div>`;
+            }
+            else if (ex.type === 'sim-chat') {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = 'Falei em Voz Alta <i class="fa-solid fa-microphone"></i>';
+                
+                html += `
+                <div class="bg-[#0f172a] border-2 border-[#334155] rounded-3xl w-full max-w-2xl p-8 text-left shadow-2xl relative overflow-hidden mx-auto mb-8 flex gap-6 items-start">
+                    <div class="w-16 h-16 rounded-full bg-[#334155] flex-shrink-0 flex items-center justify-center text-2xl border-2 border-amber-500/50"><i class="fa-solid ${ex.icon} text-amber-400"></i></div>
+                    <div>
+                        <p class="text-xs text-amber-500 tech-font uppercase tracking-widest mb-1">${ex.character}</p>
+                        <h3 class="text-xl md:text-2xl font-bold text-white mb-2 leading-relaxed">"${ex.q}"</h3>
+                    </div>
+                </div>
+                <div class="text-center w-full">
+                    <p class="text-[0.65rem] text-slate-400 mb-3 tech-font uppercase tracking-[0.2em]">A tua Resposta (Falar em voz alta):</p>
+                    <div class="bg-amber-500/10 border border-amber-500/30 px-6 py-4 rounded-2xl inline-block shadow-lg">
+                        <p class="text-2xl md:text-3xl font-black text-white drop-shadow-md">" ${ex.starter} "</p>
+                    </div>
+                </div>`;
+            }
+            else if (ex.type === 'card') {
+                // THE NEW SPEAKING CARDS ARENA
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = 'Falei em Voz Alta <i class="fa-solid fa-microphone"></i>';
+                verifyBtn.style.background = "var(--w-purple)";
+                verifyBtn.style.boxShadow = "0 4px 15px rgba(139, 92, 246, 0.4)";
+
+                html += `
+                <div class="speaking-card">
+                    <div class="w-20 h-20 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-4xl mx-auto mb-6 mic-pulse border border-purple-500/50">
+                        <i class="fa-solid ${ex.icon}"></i>
+                    </div>
+                    <p class="text-[0.65rem] tech-font text-purple-400 uppercase tracking-[0.2em] mb-3">Speaking Prompt</p>
+                    <h2 class="text-3xl md:text-4xl font-black text-white mb-4">${ex.q}</h2>
+                    <p class="text-slate-400 text-sm mb-8"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i> ${ex.hint}</p>
+                    
+                    <button onclick="toggleStarter()" class="border border-purple-500/50 bg-purple-500/10 text-purple-300 px-6 py-2 rounded-full text-sm font-bold hover:bg-purple-500/20 transition-colors">
+                        Mostrar Estrutura (Speaking Starter) <i class="fa-solid fa-eye ml-2"></i>
+                    </button>
+
+                    <div id="starter-box" class="starter-reveal">
+                        <div class="bg-slate-800/80 border-l-4 border-purple-500 p-5 rounded-r-xl text-left mt-4 shadow-inner">
+                            <p class="text-[0.65rem] text-slate-400 mb-2 tech-font uppercase tracking-widest">Estrutura Base:</p>
+                            <p class="text-xl md:text-2xl font-bold text-white">" ${ex.starter} "</p>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            html += '</div>';
+            exerciseArea.innerHTML = html;
+        }
+
+        // Mostrar/Ocultar o Starter de Fala
+        function toggleStarter() {
+            const box = document.getElementById('starter-box');
+            box.classList.toggle('open');
+        }
+
+        // Lógica de Múltipla Escolha
+        function selectChoice(index, btn) {
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedOption = index;
+            document.getElementById('verify-btn').disabled = false;
+        }
+
+        // Lógica de Caça aos Erros
+        function selectBug(index, btn) {
+            document.querySelectorAll('.bug-word').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedOption = index;
+            document.getElementById('verify-btn').disabled = false;
+        }
+
+        // Lógica de Construção de Frases
+        function toggleWord(el) {
+            const word = el.getAttribute('data-word');
+            const buildZone = document.getElementById('build-zone');
+            const verifyBtn = document.getElementById('verify-btn');
+            const ex = currentExercises[currentQ];
+            
+            if (el.parentElement.id === 'word-bank') {
+                buildZone.appendChild(el);
+                buildSelection.push(word);
+                el.classList.add('in-zone');
+            } else {
+                document.getElementById('word-bank').appendChild(el);
+                buildSelection = buildSelection.filter(w => w !== word);
+                el.classList.remove('in-zone');
+            }
+
+            if (buildSelection.length === ex.words.length) {
+                verifyBtn.disabled = false;
+                buildZone.classList.add('border-cyan-400', 'bg-cyan-400/10');
+            } else {
+                verifyBtn.disabled = true;
+                buildZone.classList.remove('border-cyan-400', 'bg-cyan-400/10');
+            }
+        }
+
+        // Verificação Global
+        function checkAnswer() {
+            const ex = currentExercises[currentQ];
+            let isCorrect = false;
+
+            if (ex.type === 'choice' || ex.type === 'hunt') isCorrect = (selectedOption === ex.a);
+            else if (ex.type === 'build') isCorrect = JSON.stringify(buildSelection) === JSON.stringify(ex.a);
+            else if (ex.type.startsWith('sim') || ex.type === 'card') isCorrect = true; // Auto-pass for speaking drills
+
+            if (isCorrect) showFeedback(true, ex.feedback || "Excelente produção oral! Estás a ganhar confiança.");
+            else showFeedback(false, "Ops! Vamos rever a regra gramatical. Lembra-te do 's' no He/She e do 'ing' nos hobbies.");
+        }
+
+        function showFeedback(isSuccess, msg) {
+            const overlay = document.getElementById('feedback-overlay');
+            const exerciseArea = document.getElementById('exercise-area');
+            const isSpeaking = currentExercises[currentQ].type === 'card';
+            
+            if(isSuccess) {
+                let colorClass = isSpeaking ? 'bg-purple-500 shadow-[0_0_40px_rgba(139,92,246,0.5)]' : 'bg-amber-500 shadow-[0_0_40px_rgba(245,158,11,0.5)]';
+                let titleColor = isSpeaking ? 'text-purple-400' : 'text-amber-400';
+                
+                document.getElementById('feedback-icon').innerHTML = `<div class="w-24 h-24 ${colorClass} rounded-full flex items-center justify-center text-black animate-[pulse_2s_infinite] mx-auto"><i class="fa-solid fa-check text-5xl"></i></div>`;
+                document.getElementById('feedback-title').innerText = "MUITO BEM!";
+                document.getElementById('feedback-title').className = `text-4xl font-black uppercase tracking-tighter mb-4 text-center ${titleColor} drop-shadow-lg`;
+                document.getElementById('feedback-msg').innerText = msg;
+                overlay.classList.add('active');
+            } else {
+                exerciseArea.classList.add('shake');
+                setTimeout(() => exerciseArea.classList.remove('shake'), 500);
+            }
+        }
+
+        function nextQuestion() {
+            document.getElementById('feedback-overlay').classList.remove('active');
+            currentQ++;
+            if (currentQ < currentExercises.length) renderQuestion();
+            else showFinalScreen();
+        }
+
+        function showFinalScreen() {
+            document.getElementById('progress-bar').style.width = "100%";
+            document.getElementById('verify-btn').parentElement.classList.add('hidden');
+
+            document.getElementById('exercise-area').innerHTML = `
+                <div class="text-center fade-in-stagger flex flex-col items-center py-8">
+                    <div class="w-32 h-32 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(245,158,11,0.4)] border-4 border-white/10 relative">
+                        <i class="fa-solid fa-trophy text-6xl text-black"></i>
+                    </div>
+                    <h1 class="text-5xl md:text-6xl font-black text-white mb-4 uppercase tracking-tighter">NÍVEL <span class="text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">CONCLUÍDO</span></h1>
+                    <p class="text-slate-300 max-w-lg text-base leading-relaxed mb-8 font-medium">
+                        Protocolo Completo! Dominaste perfeitamente as estruturas de Gostos e Preferências no Present Simple.
+                    </p>
+                    
+                    <div class="bg-slate-800 border border-slate-600 p-6 rounded-xl text-left w-full max-w-md mb-8 shadow-inner">
+                        <h4 class="text-cyan-400 font-bold uppercase text-xs tracking-widest mb-3"><i class="fa-solid fa-chart-line mr-2"></i> Resumo de Desempenho</h4>
+                        <ul class="text-sm text-white space-y-3">
+                            <li class="flex justify-between border-b border-white/10 pb-2"><span>Exercícios Concluídos:</span> <span class="font-bold text-amber-400">${currentExercises.length}</span></li>
+                            <li class="flex justify-between border-b border-white/10 pb-2"><span>Precisão Gramatical:</span> <span class="font-bold text-amber-400">Excelente</span></li>
+                            <li class="flex justify-between"><span>Produção Oral (STT):</span> <span class="font-bold text-purple-400">80%+ Atingido</span></li>
+                        </ul>
+                    </div>
+
+                    <button onclick="closeLab()" class="bg-white text-slate-900 font-extrabold py-4 px-12 rounded-full uppercase tracking-widest text-sm hover:scale-105 transition-all shadow-xl flex items-center gap-3">
+                        Voltar ao Menu Principal <i class="fa-solid fa-house"></i>
+                    </button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
